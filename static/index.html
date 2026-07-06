@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Toolkit - Premium PDF Utilities</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Style -->
+    <link rel="stylesheet" href="style.css">
+    <!-- PDF.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        // Configure PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
+    <!-- App Logic -->
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <!-- Background Ambient Glows -->
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+    <div class="glow-blob blob-3"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#8b5cf6"/>
+                                <stop offset="1" stop-color="#ec4899"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h2>PDF Toolkit</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-item active" data-tab="dashboard">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#merge" class="nav-item" data-tab="merge">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+                    <span>Merge PDFs</span>
+                </a>
+                <a href="#split" class="nav-item" data-tab="split">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 14h18M3 10h18M8 6h8M8 18h8"></path></svg>
+                    <span>Split PDFs</span>
+                </a>
+                <a href="#compress" class="nav-item" data-tab="compress">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14h16M4 10h16M12 3v7M12 14v7"></path></svg>
+                    <span>Compress PDF</span>
+                </a>
+                <a href="#rotate" class="nav-item" data-tab="rotate">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                    <span>Rotate Pages</span>
+                </a>
+                <a href="#watermark" class="nav-item" data-tab="watermark">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                    <span>Add Watermark</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <span class="version">v1.0.0</span>
+            </div>
+        </aside>
+
+        <!-- Main Display Canvas -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 id="page-title">Dashboard</h1>
+            </header>
+
+            <!-- Active View Container -->
+            <div class="content-body">
+                
+                <!-- Tab: Dashboard -->
+                <section id="view-dashboard" class="tab-view active">
+                    <div class="hero-section">
+                        <h2>Optimize and Manipulate your PDF files elegantly.</h2>
+                        <p>Select an operation from the options below or the sidebar to get started. All processing runs locally on your deployable Python backend.</p>
+                    </div>
+                    <div class="tools-grid">
+                        <!-- Card: Merge -->
+                        <div class="tool-card" onclick="window.location.hash = '#merge'">
+                            <div class="tool-icon merge-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>
+                            </div>
+                            <h3>Merge PDFs</h3>
+                            <p>Combine multiple PDF documents into a single organized file with ease.</p>
+                            <span class="card-btn">Open Tool &rarr;</span>
+                        </div>
+                        <!-- Card: Split -->
+                        <div class="tool-card" onclick="window.location.hash = '#split'">
+                            <div class="tool-icon split-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 14h18M3 10h18M8 6h8M8 18h8"></path></svg>
+                            </div>
+                            <h3>Split PDFs</h3>
+                            <p>Extract specific pages or page ranges visually from any PDF document.</p>
+                            <span class="card-btn">Open Tool &rarr;</span>
+                        </div>
+                        <!-- Card: Compress -->
+                        <div class="tool-card" onclick="window.location.hash = '#compress'">
+                            <div class="tool-icon compress-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14h16M4 10h16M12 3v7M12 14v7"></path></svg>
+                            </div>
+                            <h3>Compress PDF</h3>
+                            <p>Reduce PDF file size while maintaining document quality standards.</p>
+                            <span class="card-btn">Open Tool &rarr;</span>
+                        </div>
+                        <!-- Card: Rotate -->
+                        <div class="tool-card" onclick="window.location.hash = '#rotate'">
+                            <div class="tool-icon rotate-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                            </div>
+                            <h3>Rotate Pages</h3>
+                            <p>Rotate pages individually or all at once, adjusting layout alignment.</p>
+                            <span class="card-btn">Open Tool &rarr;</span>
+                        </div>
+                        <!-- Card: Watermark -->
+                        <div class="tool-card" onclick="window.location.hash = '#watermark'">
+                            <div class="tool-icon watermark-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                            </div>
+                            <h3>Add Watermark</h3>
+                            <p>Apply customizable text overlays to your PDF pages in real-time.</p>
+                            <span class="card-btn">Open Tool &rarr;</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: Merge -->
+                <section id="view-merge" class="tab-view">
+                    <div class="tool-workspace">
+                        <div class="upload-zone" id="merge-upload-zone">
+                            <input type="file" id="merge-file-input" multiple accept=".pdf" class="file-input-hidden">
+                            <div class="zone-content">
+                                <div class="upload-icon-circle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                </div>
+                                <p class="primary-text">Drag and drop multiple PDFs here, or <span class="highlight">browse</span></p>
+                                <p class="secondary-text">Supports PDF format up to 50MB</p>
+                            </div>
+                        </div>
+
+                        <!-- Merge Files Control Panel -->
+                        <div class="workspace-panel hidden" id="merge-panel">
+                            <div class="panel-header">
+                                <h3>Uploaded Documents</h3>
+                                <button class="btn btn-secondary btn-sm" id="btn-merge-clear">Clear All</button>
+                            </div>
+                            <div class="file-list-container" id="merge-file-list">
+                                <!-- Dynamic List Items -->
+                            </div>
+                            <div class="panel-actions">
+                                <button class="btn btn-primary btn-lg" id="btn-run-merge">
+                                    <span>Merge PDFs</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M12 5v14M5 12h14"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: Split -->
+                <section id="view-split" class="tab-view">
+                    <div class="tool-workspace-split">
+                        <div class="upload-zone" id="split-upload-zone">
+                            <input type="file" id="split-file-input" accept=".pdf" class="file-input-hidden">
+                            <div class="zone-content">
+                                <div class="upload-icon-circle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                </div>
+                                <p class="primary-text">Drag and drop a PDF here, or <span class="highlight">browse</span></p>
+                                <p class="secondary-text">Supports single PDF document</p>
+                            </div>
+                        </div>
+
+                        <!-- Split Files Control Panel -->
+                        <div class="workspace-panel-split hidden" id="split-panel">
+                            <div class="split-layout">
+                                <!-- Left side settings -->
+                                <div class="split-controls">
+                                    <h3>Split Settings</h3>
+                                    <div class="form-group">
+                                        <label for="split-ranges-input">Custom Page Range</label>
+                                        <input type="text" id="split-ranges-input" placeholder="e.g. 1-3, 5, 8-10" class="form-control">
+                                        <small class="help-text">Enter page numbers and/or ranges separated by commas.</small>
+                                    </div>
+                                    <div class="selection-metrics">
+                                        <div class="metric-row">
+                                            <span>Total Pages:</span>
+                                            <span id="split-total-pages">0</span>
+                                        </div>
+                                        <div class="metric-row">
+                                            <span>Selected Pages:</span>
+                                            <span id="split-selected-pages">0</span>
+                                        </div>
+                                    </div>
+                                    <div class="select-presets">
+                                        <button class="btn btn-secondary btn-sm" id="btn-split-select-all">Select All</button>
+                                        <button class="btn btn-secondary btn-sm" id="btn-split-clear">Clear</button>
+                                    </div>
+                                    <button class="btn btn-primary btn-lg w-100 mt-4" id="btn-run-split">
+                                        <span>Extract Pages</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M3 14h18M3 10h18M8 6h8M8 18h8"></path></svg>
+                                    </button>
+                                </div>
+                                <!-- Right side visual list of pages -->
+                                <div class="split-visualizer">
+                                    <div class="visualizer-header">
+                                        <h3>Visual Page Selector</h3>
+                                        <span class="tip-text">Click pages to toggle selection</span>
+                                    </div>
+                                    <div class="page-grid" id="split-page-grid">
+                                        <!-- Dynamic grid pages -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: Compress -->
+                <section id="view-compress" class="tab-view">
+                    <div class="tool-workspace">
+                        <div class="upload-zone" id="compress-upload-zone">
+                            <input type="file" id="compress-file-input" accept=".pdf" class="file-input-hidden">
+                            <div class="zone-content">
+                                <div class="upload-icon-circle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                </div>
+                                <p class="primary-text">Drag and drop your PDF here, or <span class="highlight">browse</span></p>
+                                <p class="secondary-text">Supports single PDF document</p>
+                            </div>
+                        </div>
+
+                        <!-- Compress Control Panel -->
+                        <div class="workspace-panel hidden" id="compress-panel">
+                            <div class="panel-header">
+                                <h3>Optimize Compression</h3>
+                                <span class="filename-tag" id="compress-filename">sample.pdf</span>
+                            </div>
+                            <div class="compression-settings">
+                                <label class="compression-option">
+                                    <input type="radio" name="compression-level" value="low">
+                                    <div class="option-card">
+                                        <span class="option-title">Low Compression</span>
+                                        <span class="option-desc">Maximum image quality, modest size reduction</span>
+                                    </div>
+                                </label>
+                                <label class="compression-option">
+                                    <input type="radio" name="compression-level" value="medium" checked>
+                                    <div class="option-card">
+                                        <span class="option-title">Medium Compression</span>
+                                        <span class="option-desc">Standard settings. Perfect balance of quality and size</span>
+                                    </div>
+                                </label>
+                                <label class="compression-option">
+                                    <input type="radio" name="compression-level" value="high">
+                                    <div class="option-card">
+                                        <span class="option-title">High Compression</span>
+                                        <span class="option-desc">Maximum compression, reduced image resolution</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="btn btn-primary btn-lg" id="btn-run-compress">
+                                    <span>Compress PDF</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M4 14h16M4 10h16M12 3v7M12 14v7"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Post Compression Report -->
+                        <div class="workspace-panel hidden" id="compress-result-panel">
+                            <div class="result-card">
+                                <div class="success-icon-circle animate-pulse">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="32"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                </div>
+                                <h2>PDF Compressed Successfully!</h2>
+                                <div class="stats-container">
+                                    <div class="stat-box">
+                                        <span class="stat-label">Original Size</span>
+                                        <span class="stat-val" id="comp-stat-orig">0 MB</span>
+                                    </div>
+                                    <div class="stat-box arrow-box">
+                                        &rarr;
+                                    </div>
+                                    <div class="stat-box">
+                                        <span class="stat-label">Compressed Size</span>
+                                        <span class="stat-val" id="comp-stat-new">0 MB</span>
+                                    </div>
+                                    <div class="stat-box accent-box">
+                                        <span class="stat-label">Size Saved</span>
+                                        <span class="stat-val" id="comp-stat-saved">0%</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary btn-lg" id="btn-download-compressed">Download Optimized PDF</button>
+                                <button class="btn btn-secondary btn-md mt-3" id="btn-compress-restart">Compress Another File</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: Rotate -->
+                <section id="view-rotate" class="tab-view">
+                    <div class="tool-workspace">
+                        <div class="upload-zone" id="rotate-upload-zone">
+                            <input type="file" id="rotate-file-input" accept=".pdf" class="file-input-hidden">
+                            <div class="zone-content">
+                                <div class="upload-icon-circle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                </div>
+                                <p class="primary-text">Drag and drop your PDF here, or <span class="highlight">browse</span></p>
+                                <p class="secondary-text">Supports single PDF document</p>
+                            </div>
+                        </div>
+
+                        <!-- Rotate Control Panel -->
+                        <div class="workspace-panel hidden" id="rotate-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h3>Visual Page Rotator</h3>
+                                    <p class="subtitle-text">Click individual pages to rotate them clockwise by 90&deg;</p>
+                                </div>
+                                <div class="rotate-presets">
+                                    <button class="btn btn-secondary btn-sm" id="btn-rotate-all-90">Rotate All 90&deg;</button>
+                                    <button class="btn btn-secondary btn-sm" id="btn-rotate-clear">Reset All</button>
+                                </div>
+                            </div>
+                            
+                            <div class="page-grid page-grid-large" id="rotate-page-grid">
+                                <!-- Dynamic rotate grid -->
+                            </div>
+
+                            <div class="panel-actions mt-4">
+                                <button class="btn btn-primary btn-lg" id="btn-run-rotate">
+                                    <span>Apply Rotations</span>
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tab: Watermark -->
+                <section id="view-watermark" class="tab-view">
+                    <div class="tool-workspace-split">
+                        <div class="upload-zone" id="watermark-upload-zone">
+                            <input type="file" id="watermark-file-input" accept=".pdf" class="file-input-hidden">
+                            <div class="zone-content">
+                                <div class="upload-icon-circle">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                                </div>
+                                <p class="primary-text">Drag and drop your PDF here, or <span class="highlight">browse</span></p>
+                                <p class="secondary-text">Supports single PDF document</p>
+                            </div>
+                        </div>
+
+                        <!-- Watermark Controls Workspace -->
+                        <div class="workspace-panel-split hidden" id="watermark-panel">
+                            <div class="split-layout">
+                                <!-- Settings Sidebar -->
+                                <div class="split-controls">
+                                    <h3>Watermark Options</h3>
+                                    
+                                    <div class="form-group">
+                                        <label for="wm-text">Watermark Text</label>
+                                        <input type="text" id="wm-text" value="CONFIDENTIAL" class="form-control">
+                                    </div>
+                                    
+                                    <div class="form-group-row">
+                                        <div class="form-group">
+                                            <label for="wm-font">Font Family</label>
+                                            <select id="wm-font" class="form-control">
+                                                <option value="Helvetica">Helvetica</option>
+                                                <option value="Times-Roman">Times New Roman</option>
+                                                <option value="Courier">Courier</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="wm-color">Color</label>
+                                            <div class="color-picker-wrapper">
+                                                <input type="color" id="wm-color" value="#ff0000">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="slider-header">
+                                            <label for="wm-size">Font Size</label>
+                                            <span id="val-wm-size">36px</span>
+                                        </div>
+                                        <input type="range" id="wm-size" min="12" max="100" value="36" class="form-slider">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="slider-header">
+                                            <label for="wm-opacity">Opacity</label>
+                                            <span id="val-wm-opacity">0.3</span>
+                                        </div>
+                                        <input type="range" id="wm-opacity" min="0.1" max="1.0" step="0.05" value="0.3" class="form-slider">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="slider-header">
+                                            <label for="wm-rotation">Rotation Angle</label>
+                                            <span id="val-wm-rotation">45&deg;</span>
+                                        </div>
+                                        <input type="range" id="wm-rotation" min="-180" max="180" value="45" class="form-slider">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="wm-position">Placement Position</label>
+                                        <select id="wm-position" class="form-control">
+                                            <option value="center">Center</option>
+                                            <option value="top-left">Top Left</option>
+                                            <option value="top-right">Top Right</option>
+                                            <option value="bottom-left">Bottom Left</option>
+                                            <option value="bottom-right">Bottom Right</option>
+                                            <option value="tiled">Tiled Overlay</option>
+                                        </select>
+                                    </div>
+
+                                    <button class="btn btn-primary btn-lg w-100 mt-4" id="btn-run-watermark">
+                                        <span>Add Watermark</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path></svg>
+                                    </button>
+                                </div>
+
+                                <!-- Dynamic Preview Canvas -->
+                                <div class="split-visualizer">
+                                    <div class="visualizer-header">
+                                        <h3>Real-time Preview</h3>
+                                        <span class="tip-text">First page sample preview</span>
+                                    </div>
+                                    <div class="preview-container">
+                                        <div class="preview-canvas-wrapper" id="preview-wrapper">
+                                            <canvas id="watermark-preview-canvas"></canvas>
+                                            <div id="watermark-overlay" class="watermark-overlay-element">CONFIDENTIAL</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Full-screen Loading Overlay -->
+    <div class="loading-overlay hidden" id="loading-overlay">
+        <div class="loading-spinner-box">
+            <div class="neon-spinner"></div>
+            <p id="loading-message">Processing PDF streams...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notification System -->
+    <div class="toast-container" id="toast-container"></div>
+</body>
+</html>

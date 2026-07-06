@@ -1,0 +1,10 @@
+.git_bin/
+__pycache__/
+downloads/
+*.log
+.DS_Store
+.idea/
+.vscode/
+venv/
+env/
+*.pyc
