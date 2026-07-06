@@ -2,6 +2,14 @@
 
 An elegant, fully-featured, and deployable PDF manipulation toolkit built with a Python (FastAPI) backend and a modern glassmorphism SPA frontend.
 
+## Previews
+
+### Dashboard View
+![Dashboard Preview](screenshots/dashboard.png)
+
+### Merge PDFs Workspace
+![Merge PDFs Workspace](screenshots/merge.png)
+
 ## Features
 
 - **Merge PDFs**: Upload multiple files, visually arrange their order via navigation controls, and merge them into a single PDF document.
