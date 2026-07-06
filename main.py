@@ -14,9 +14,13 @@ from reportlab.lib.pagesizes import letter
 
 app = FastAPI(title="PDF Toolkit API")
 
-# Ensure downloads directory exists in workspace
-DOWNLOADS_DIR = os.path.join(os.path.dirname(__file__), "downloads")
-os.makedirs(DOWNLOADS_DIR, exist_ok=True)
+# Ensure downloads directory exists in workspace (fallback to /tmp in serverless/Vercel)
+if os.environ.get("VERCEL") or not os.access(os.path.dirname(os.path.abspath(__file__)), os.W_OK):
+    DOWNLOADS_DIR = "/tmp"
+else:
+    DOWNLOADS_DIR = os.path.join(os.path.dirname(__file__), "downloads")
+    os.makedirs(DOWNLOADS_DIR, exist_ok=True)
+
 
 # Enable CORS for development
 app.add_middleware(
@@ -63,6 +67,37 @@ def parse_page_range(range_str: str, total_pages: int) -> List[int]:
                 raise HTTPException(status_code=400, detail=f"Invalid page number: {part}")
     return pages
 
+
+def get_pdf_response(file_data: bytes, filename: str, default_download_name: str, extra_headers: Optional[dict] = None) -> StreamingResponse:
+    headers = {
+        "Content-Disposition": f"attachment; filename={default_download_name}"
+    }
+    if extra_headers:
+        headers.update(extra_headers)
+        
+    expose_headers = list(extra_headers.keys()) if extra_headers else []
+    
+    if not os.environ.get("VERCEL"):
+        try:
+            local_path = os.path.join(DOWNLOADS_DIR, filename)
+            with open(local_path, "wb") as f:
+                f.write(file_data)
+            abs_path = os.path.abspath(local_path)
+            headers["X-Saved-Path"] = abs_path
+            expose_headers.append("X-Saved-Path")
+        except Exception as e:
+            print(f"Warning: Could not save file locally: {e}")
+            
+    if expose_headers:
+        headers["Access-Control-Expose-Headers"] = ", ".join(expose_headers)
+        
+    return StreamingResponse(
+        io.BytesIO(file_data),
+        media_type="application/pdf",
+        headers=headers
+    )
+
+
 # Endpoint: Merge PDFs
 @app.post("/api/merge")
 async def merge_pdfs(files: List[UploadFile] = File(...)):
@@ -86,22 +121,10 @@ async def merge_pdfs(files: List[UploadFile] = File(...)):
         output.seek(0)
         
         file_data = output.getvalue()
-        filename = f"merged_{int(time.time())}.pdf"
-        local_path = os.path.join(DOWNLOADS_DIR, filename)
-        with open(local_path, "wb") as f:
-            f.write(file_data)
-        abs_path = os.path.abspath(local_path)
-        
-        headers = {
-            "Content-Disposition": "attachment; filename=merged.pdf",
-            "X-Saved-Path": abs_path,
-            "Access-Control-Expose-Headers": "X-Saved-Path"
-        }
-        
-        return StreamingResponse(
-            io.BytesIO(file_data),
-            media_type="application/pdf",
-            headers=headers
+        return get_pdf_response(
+            file_data, 
+            f"merged_{int(time.time())}.pdf", 
+            "merged.pdf"
         )
     except HTTPException as he:
         raise he
@@ -144,22 +167,10 @@ async def split_pdf(
         output.seek(0)
         
         file_data = output.getvalue()
-        filename = f"split_{int(time.time())}.pdf"
-        local_path = os.path.join(DOWNLOADS_DIR, filename)
-        with open(local_path, "wb") as f:
-            f.write(file_data)
-        abs_path = os.path.abspath(local_path)
-        
-        headers = {
-            "Content-Disposition": "attachment; filename=split.pdf",
-            "X-Saved-Path": abs_path,
-            "Access-Control-Expose-Headers": "X-Saved-Path"
-        }
-        
-        return StreamingResponse(
-            io.BytesIO(file_data),
-            media_type="application/pdf",
-            headers=headers
+        return get_pdf_response(
+            file_data, 
+            f"split_{int(time.time())}.pdf", 
+            "split.pdf"
         )
     except HTTPException as he:
         raise he
@@ -196,25 +207,15 @@ async def compress_pdf(
         compressed_size = len(output.getvalue())
         
         file_data = output.getvalue()
-        filename = f"compressed_{int(time.time())}.pdf"
-        local_path = os.path.join(DOWNLOADS_DIR, filename)
-        with open(local_path, "wb") as f:
-            f.write(file_data)
-        abs_path = os.path.abspath(local_path)
-
-        # We can add custom headers to return compression stats
-        headers = {
-            "Content-Disposition": "attachment; filename=compressed.pdf",
+        extra_headers = {
             "X-Original-Size": str(original_size),
-            "X-Compressed-Size": str(compressed_size),
-            "X-Saved-Path": abs_path,
-            "Access-Control-Expose-Headers": "X-Original-Size, X-Compressed-Size, X-Saved-Path"
+            "X-Compressed-Size": str(compressed_size)
         }
-        
-        return StreamingResponse(
-            io.BytesIO(file_data),
-            media_type="application/pdf",
-            headers=headers
+        return get_pdf_response(
+            file_data, 
+            f"compressed_{int(time.time())}.pdf", 
+            "compressed.pdf", 
+            extra_headers
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error compressing PDF: {str(e)}")
@@ -249,22 +250,10 @@ async def rotate_pdf(
         output.seek(0)
         
         file_data = output.getvalue()
-        filename = f"rotated_{int(time.time())}.pdf"
-        local_path = os.path.join(DOWNLOADS_DIR, filename)
-        with open(local_path, "wb") as f:
-            f.write(file_data)
-        abs_path = os.path.abspath(local_path)
-        
-        headers = {
-            "Content-Disposition": "attachment; filename=rotated.pdf",
-            "X-Saved-Path": abs_path,
-            "Access-Control-Expose-Headers": "X-Saved-Path"
-        }
-        
-        return StreamingResponse(
-            io.BytesIO(file_data),
-            media_type="application/pdf",
-            headers=headers
+        return get_pdf_response(
+            file_data, 
+            f"rotated_{int(time.time())}.pdf", 
+            "rotated.pdf"
         )
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid rotations JSON map.")
@@ -380,22 +369,10 @@ async def watermark_pdf(
         output.seek(0)
         
         file_data = output.getvalue()
-        filename = f"watermarked_{int(time.time())}.pdf"
-        local_path = os.path.join(DOWNLOADS_DIR, filename)
-        with open(local_path, "wb") as f:
-            f.write(file_data)
-        abs_path = os.path.abspath(local_path)
-        
-        headers = {
-            "Content-Disposition": "attachment; filename=watermarked.pdf",
-            "X-Saved-Path": abs_path,
-            "Access-Control-Expose-Headers": "X-Saved-Path"
-        }
-        
-        return StreamingResponse(
-            io.BytesIO(file_data),
-            media_type="application/pdf",
-            headers=headers
+        return get_pdf_response(
+            file_data, 
+            f"watermarked_{int(time.time())}.pdf", 
+            "watermarked.pdf"
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error watermarking PDF: {str(e)}")

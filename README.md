@@ -85,3 +85,11 @@ Heroku will automatically discover the `requirements.txt` file and build it usin
   web: uvicorn main:app --host 0.0.0.0 --port $PORT
   ```
 - Push to your Heroku app remote.
+
+### 4. Deploying to Vercel
+This repository is configured for easy zero-config deployment to Vercel using Python Serverless Functions.
+- Create a new project in the Vercel Dashboard.
+- Connect your GitHub repository containing this project.
+- Click **Deploy**. Vercel will automatically read the `vercel.json` and `requirements.txt` configurations, build the serverless functions under `/api`, and deploy the application.
+
+
